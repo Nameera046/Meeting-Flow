@@ -227,16 +227,25 @@ const Meetings = () => {
                       <ChevronRight size={14} />
                     </Link>
                   ) : (
-                    <button
-                      onClick={() => {
-                        setSelectedMeeting(meeting);
-                        setUploadModalOpen(true);
-                      }}
-                      className="flex-1 bg-accent hover:bg-accent-light text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-card"
-                    >
-                      <Upload size={14} />
-                      Upload Transcript
-                    </button>
+                    <>
+                      <Link
+                        to={`/meetings/${meeting.id}/room`}
+                        className="flex-1 bg-accent hover:bg-accent-light text-white py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-card text-center"
+                      >
+                        <Users size={14} />
+                        Join Video Call
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setSelectedMeeting(meeting);
+                          setUploadModalOpen(true);
+                        }}
+                        className="px-3 bg-white border border-border hover:bg-slate-50 text-secondary py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        title="Upload manual notes or transcript"
+                      >
+                        <Upload size={14} />
+                      </button>
+                    </>
                   )}
                 </div>
               </div>

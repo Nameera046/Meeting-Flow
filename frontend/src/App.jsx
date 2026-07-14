@@ -12,9 +12,10 @@ import Meetings from './pages/Meetings';
 import MeetingDetail from './pages/MeetingDetail';
 import Tasks from './pages/Tasks';
 import SearchPage from './pages/Search';
+import MeetingRoom from './pages/MeetingRoom';
 
 // Protected Route Wrapper
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, noLayout = false }) => {
   const { token, loading } = useAuth();
 
   if (loading) {
@@ -29,7 +30,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return <Layout>{children}</Layout>;
+  return noLayout ? children : <Layout>{children}</Layout>;
 };
 
 const App = () => {
@@ -63,6 +64,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <MeetingDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meetings/:id/room"
+            element={
+              <ProtectedRoute noLayout={true}>
+                <MeetingRoom />
               </ProtectedRoute>
             }
           />

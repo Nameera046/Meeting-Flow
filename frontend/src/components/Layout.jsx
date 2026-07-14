@@ -22,11 +22,30 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Handle responsive sidebar state and route changes
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -83,11 +102,12 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar - Desktop */}
+      {/* Sidebar Navigation */}
       <aside
-        className={`bg-primary text-white flex flex-col justify-between transition-all duration-300 z-30 ${
-          sidebarOpen ? 'w-64' : 'w-20'
-        } hidden md:flex`}
+        className={`bg-primary text-white flex flex-col justify-between transition-all duration-300 z-30 
+          fixed md:relative top-0 bottom-0 left-0 h-screen md:h-auto shadow-dropdown md:shadow-none
+          ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 w-64 md:w-20'}
+          flex`}
       >
         <div>
           {/* Brand Logo */}
@@ -97,13 +117,29 @@ const Layout = ({ children }) => {
                 <span className="text-accent">Meeting</span>Flow
               </span>
             ) : (
-              <span className="text-xl font-bold text-accent px-1">MF</span>
+              <>
+                <span className="text-xl font-bold tracking-tight text-white flex items-center gap-2 md:hidden">
+                  <span className="text-accent">Meeting</span>Flow
+                </span>
+                <span className="text-xl font-bold text-accent px-1 hidden md:inline">MF</span>
+              </>
             )}
+            
+            {/* Desktop toggle button */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-secondary-light hover:text-white transition-colors"
+              className="hidden md:block text-secondary-light hover:text-white transition-colors cursor-pointer"
             >
               {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            </button>
+
+            {/* Mobile close button */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="md:hidden text-slate-300 hover:text-white transition-colors p-1 cursor-pointer"
+              title="Close Menu"
+            >
+              <X size={20} />
             </button>
           </div>
 
@@ -169,11 +205,17 @@ const Layout = ({ children }) => {
         <header className="h-16 bg-white border-b border-border flex items-center justify-between px-6 z-20">
           <div className="flex items-center gap-4 flex-1">
             <button
-              className="md:hidden text-secondary hover:text-primary"
+              className={`md:hidden p-1.5 rounded-lg transition-colors fixed top-3 left-4 z-40 cursor-pointer ${
+                sidebarOpen ? 'text-slate-300 hover:text-white' : 'text-secondary hover:text-primary hover:bg-slate-50'
+              }`}
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
             >
-              <Menu size={24} />
+              {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
+            
+            {/* Spacer to push navbar elements past the fixed mobile menu button */}
+            <div className="w-10 md:hidden flex-shrink-0"></div>
             
             {/* Global Search bar */}
             <form onSubmit={handleSearchSubmit} className="max-w-md w-full relative hidden sm:block">
