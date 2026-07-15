@@ -44,9 +44,9 @@ const MeetingRoom = () => {
     if (!loading && meeting && !error) {
       // 1. Initialize Jitsi Meet Iframe
       if (window.JitsiMeetExternalAPI) {
-        const domain = 'meet.jit.si';
+        const domain = 'meet.ffmuc.net';
         const options = {
-          roomName: `MeetingFlow_Room_${meeting.id}_${meeting.title.replace(/\s+/g, '_')}`,
+          roomName: `MeetingFlow_Room_${meeting.id}_${meeting.title.replace(/[^a-zA-Z0-9]+/g, '_')}`,
           width: '100%',
           height: '100%',
           parentNode: jitsiContainerRef.current,
@@ -272,8 +272,8 @@ const MeetingRoom = () => {
       {/* Main splits screen */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Left Jitsi Iframe Video Feed */}
-        <div className="flex-1 h-[45vh] md:h-full bg-slate-900 p-2">
-          <div ref={jitsiContainerRef} className="w-full h-full rounded-xl overflow-hidden bg-slate-950">
+        <div className="flex-1 h-[45vh] md:h-full bg-slate-900 p-2 flex flex-col">
+          <div ref={jitsiContainerRef} className="w-full flex-1 rounded-xl overflow-hidden bg-slate-950 min-h-[300px] md:min-h-0">
             {/* Jitsi Meet will inject its video iframe here */}
           </div>
         </div>

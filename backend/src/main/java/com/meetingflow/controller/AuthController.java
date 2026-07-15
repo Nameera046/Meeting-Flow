@@ -22,9 +22,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        AuthResponse response = authService.authenticateUser(loginRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            AuthResponse response = authService.authenticateUser(loginRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.status(401).body(ex.getMessage());
+        }
     }
 
     @PostMapping("/register")
